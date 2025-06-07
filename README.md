@@ -1,4 +1,4 @@
-# Smart Choice Hub
+# Smart Choice Hub 
 
 Une plateforme web collaborative conçue pour faciliter la prise de décision collective au sein d'un groupe ou d'une organisation.  
 Elle permet aux utilisateurs de soumettre des propositions, de les commenter et de suivre leur évolution dans un espace structuré et sécurisé.  
