@@ -56,7 +56,6 @@ sequenceDiagram
   <img src="client/src/assets/images/architecture_projet.png" alt="Schéma visuel de l'architecture du projet (MVC)" width="800">
 </div>
 -->
-
 ## Flux de navigation de l'application
 
 <div align="center">
