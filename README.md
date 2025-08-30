@@ -220,7 +220,12 @@ CLIENT_URL=http://localhost:3000
 
 ## Auteur
 
-Projet réalisé par Nadir AMMI SAID et quatre autres développeurs dans le cadre de la formation Développeur Web et Web Mobile à la Wild Code School (promotion 2025).
+Projet réalisé par [**Nadir AMMI SAID**](https://www.linkedin.com/in/nadir-ammisaid/) et quatre autres développeurs dans le cadre de la formation Développeur Web et Web Mobile à la Wild Code School (promotion 2025).
+<br/>
+**💬 Vos avis m'intéressent - n'hésitez pas à me faire part de vos retours ou suggestions !**
+<br/>
+📩 Vous pouvez me contacter directement sur LinkedIn : [https://www.linkedin.com/in/nadir-ammisaid/](https://www.linkedin.com/in/nadir-ammisaid/)
+
 
 ## Contribution
 
@@ -459,8 +464,11 @@ FRONT_URL=http://localhost:5173
 
 ## Author
 
-Project created by Nadir AMMI SAID and four other developers as part of the Web and Mobile Web Developer training at Wild Code School (2025 cohort).
-
+Project created by [**Nadir AMMI SAID**](https://www.linkedin.com/in/nadir-ammisaid/) and four other developers as part of the Web and Mobile Web Developer training at Wild Code School (2025 cohort).
+<br/>
+**💬 Your feedback matters - don't hesitate to share your thoughts or suggestions!**
+<br/>
+📩 You can contact me directly on LinkedIn: [https://www.linkedin.com/in/nadir-ammisaid/](https://www.linkedin.com/in/nadir-ammisaid/)
 ## Contribution
 
 To contribute to the project:
