@@ -1,4 +1,15 @@
-# Smart Choice Hub 
+<a href="#fr">
+  <img src="https://flagcdn.com/w40/fr.png" width="20" alt="Français"> Français
+</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+<a href="#en">
+  <img src="https://flagcdn.com/w40/gb.png" width="20" alt="English"> English
+</a>
+
+<hr style="margin-top: 4px; margin-bottom: 12px; border: none; border-top: 1px solid #ccc;" />
+
+<img id="fr" src="https://flagcdn.com/w40/fr.png" width="20" alt="Français"> Français
+
+<h1>Smart Choice Hub</h1>
 
 Une plateforme web collaborative conçue pour faciliter la prise de décision collective au sein d'un groupe ou d'une organisation.  
 Elle permet aux utilisateurs de soumettre des propositions, de les commenter et de suivre leur évolution dans un espace structuré et sécurisé.  
@@ -243,11 +254,13 @@ Pour contribuer au projet :
 - Suivez les principes SOLID pour une architecture de code propre et maintenable
 
 
----------------
----------------
+<br/>
+<hr id="en" style="margin-top: 4px; margin-bottom: 12px; border: none; border-top: 1px solid #ccc;" />
+<br/>
 
+<img src="https://flagcdn.com/w40/gb.png" width="20" alt="English"> English
 
-# Smart Choice Hub
+<h1>Smart Choice Hub</h1>
 
 A collaborative web platform designed to facilitate collective decision-making within a group or organization.  
 It allows users to submit proposals, comment on them, and track their evolution in a structured and secure space.  
