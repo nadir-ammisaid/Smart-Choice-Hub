@@ -20,7 +20,7 @@ const browse: RequestHandler = async (req, res, next) => {
 const read: RequestHandler = async (req, res, next) => {
   try {
     // Fetch a specific comment based on the provided ID
-    const insertId = Number.parseInt(req.params.id);
+    const insertId = Number(req.params.id);
     const comment = await commentRepository.read(insertId);
 
     // If the comment is not found, respond with HTTP 404 (Not Found)

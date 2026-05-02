@@ -5,7 +5,7 @@
     "dev": "tsx watch --clear-screen=false ./src/main",
     "db:migrate": "tsx ./bin/migrate",
     "db:seed": "tsx ./bin/seed",
-    "build": "tsc ./src/main --outDir ../dist --esModuleInterop",
+    "build": "tsc -p tsconfig.json",
     "start": "node ../dist/src/main.js",
     "test": "jest --verbose"
   },
