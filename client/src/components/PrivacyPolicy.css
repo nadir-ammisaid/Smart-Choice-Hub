@@ -40,46 +40,46 @@
 
 /* Titre principal */
 .privacy-policy-title {
-  color: #0c0c0c;
-  font-family: "Roboto", sans-serif;
-  font-size: 2rem;
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-2xl);
   font-weight: 700;
   text-transform: uppercase;
-  margin-top: 3rem;
-  margin-bottom: 2rem;
-  text-align: center; /* Centrer le titre */
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
 }
 
-/* Sous-titres */
 .privacy-policy-subtitle {
-  color: #161617;
-  font-family: "Roboto", sans-serif;
-  font-size: 1.5rem;
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-lg);
   font-weight: 700;
-  margin-bottom: 2rem;
-  text-align: center; /* Centrer les sous-titres */
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
 }
 
 /* Paragraphe standard */
 .privacy-policy-paragraph {
   line-height: 1.8;
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-md);
   word-wrap: break-word;
-  text-align: center; /* Centrer tous les paragraphes */
-  max-width: 800px;
+  text-align: center;
+  max-width: clamp(280px, 90vw, 800px);
   margin-left: auto;
-  margin-right: auto; /* Centrer les paragraphes */
+  margin-right: auto;
 }
+
 .privacy-policy-paragraph1 {
   line-height: 1.8;
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-md);
   word-wrap: break-word;
   text-align: start;
-  max-width: 800px;
+  max-width: clamp(280px, 90vw, 800px);
   margin-left: auto;
-  margin-right: auto; /* Centrer les paragraphes */
+  margin-right: auto;
 }
 /* Appliquer du style au texte en gras, tel que "nous", "vous", etc. */
 .privacy-policy-bold {
@@ -88,7 +88,7 @@
 
 /* Styles pour les liens */
 .privacy-policy-link {
-  color: #111111;
+  color: var(--color-text);
   text-decoration: none;
 }
 

@@ -45,8 +45,7 @@
   gap: var(--spacing-lg);
   margin-top: var(--spacing-lg);
   width: 100%;
-  max-width: clamp(280px, 90vw, 768px);
-  padding: 0 var(--spacing-xs);
+  max-width: var(--breakpoint-md);
 }
 
 #fieldsAndButtons {
@@ -58,8 +57,8 @@
 
 .text_container {
   width: 100%;
-  max-width: clamp(280px, 90vw, 350px);
-  height: clamp(3rem, 8vw, 4rem);
+  max-width: 350px;
+  height: clamp(3.5rem, 10vw, 4rem);
   border-radius: var(--radius-sm);
   background: var(--color-secondary);
   box-shadow: var(--shadow-md);
@@ -108,7 +107,7 @@
 }
 
 #password_recovery_link:hover {
-  color: var(--color-primary-hover);
+  color: lighten(var(--color-primary), 20%);
 }
 
 #delete-button {
@@ -131,7 +130,7 @@
 }
 
 #delete-button:hover {
-  background-color: var(--color-accent-red-hover);
+  background-color: darken(var(--color-accent-red), 10%);
   transform: translateY(-2px);
 }
 
@@ -158,7 +157,7 @@
 }
 
 #delete-button-yes:hover {
-  background-color: var(--color-accent-red-hover);
+  background-color: darken(var(--color-accent-red), 10%);
   transform: translateY(-2px);
 }
 
@@ -168,7 +167,7 @@
 }
 
 #delete-button-cancel:hover {
-  background-color: var(--color-primary-hover);
+  background-color: lighten(var(--color-primary), 10%);
   transform: translateY(-2px);
 }
 
@@ -191,7 +190,7 @@
 }
 
 #button_icon-update-my-avatar:hover {
-  background-color: var(--color-primary-hover);
+  background-color: lighten(var(--color-primary), 10%);
   transform: translateY(-2px);
 }
 
@@ -258,13 +257,11 @@
   #champ_container {
     gap: var(--spacing-lg);
     margin-top: 0;
-    max-width: 500px;
   }
 
   .text_container {
-    width: 100%;
-    max-width: clamp(280px, 90vw, 26rem);
-    height: clamp(3.5rem, 8vw, 5rem);
+    width: 26rem;
+    height: 5rem;
   }
 
   .text_container h3 {
@@ -272,14 +269,14 @@
   }
 
   #avatar {
-    height: clamp(12rem, 20vw, 15rem);
-    width: clamp(12rem, 20vw, 15rem);
+    height: 15rem;
+    width: 15rem;
   }
 
   #edit_icon_profile_avatar,
   .edit_icon_profile {
-    width: clamp(2rem, 5vw, 3rem);
-    height: clamp(2rem, 5vw, 3rem);
+    width: clamp(2.5rem, 5vw, 3rem);
+    height: clamp(2.5rem, 5vw, 3rem);
   }
 
   #icon_container {

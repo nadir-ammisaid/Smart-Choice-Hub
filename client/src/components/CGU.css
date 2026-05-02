@@ -71,23 +71,24 @@
 .devoirs,
 .interdits,
 .sanctions {
-  color: rgb(9, 8, 8);
+  color: var(--color-text);
   font-weight: 700;
 }
 
 /* Styles pour les liens */
 .acgu-paragraph-a {
-  color: #0e0e0f;
+  color: var(--color-primary);
   text-decoration: none;
 }
+
 /* Ajouter une règle spécifique pour l'URL dans le texte */
 .url-link {
-  color: #101011; /* Bleu spécifique pour l'URL */
-  text-decoration: none; /* Supprimer la souligné */
+  color: var(--color-primary);
+  text-decoration: none;
 }
 
 .url-link:hover {
-  text-decoration: underline; /* Souligner l'URL au survol */
+  text-decoration: underline;
 }
 
 @media screen and (min-width: 431px) {

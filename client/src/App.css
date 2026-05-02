@@ -1,5 +1,72 @@
+:root {
+  /* Color Palette */
+  --color-primary: #000;
+  --color-primary-hover: #333;
+  --color-secondary: #f5f5f5;
+  --color-accent: #56bd66;
+  --color-accent-hover: #4aa952;
+  --color-accent-red: #ea3d32;
+  --color-accent-red-hover: #c42d1d;
+  --color-text: #000;
+  --color-bg: #fff;
+  --color-border: #ddd;
+  --color-error: #dc3545;
+  --color-focus: #007bff;
+  --color-shadow: rgba(0, 0, 0, 0.25);
+  --color-modal-bg: rgba(0, 0, 0, 0.5);
+
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-full: 50%;
+
+  /* Shadow */
+  --shadow-sm: 2px 2px 5px var(--color-shadow);
+  --shadow-md: 10px 10px 14px var(--color-shadow);
+
+  /* Typography */
+  --font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-xs: clamp(0.75rem, 2vw, 0.875rem);
+  --font-size-sm: clamp(0.875rem, 2.5vw, 1rem);
+  --font-size-base: clamp(1rem, 3vw, 1.125rem);
+  --font-size-lg: clamp(1.125rem, 3.5vw, 1.5rem);
+  --font-size-xl: clamp(1.5rem, 4vw, 2rem);
+  --font-size-2xl: clamp(1.875rem, 5vw, 2.5rem);
+
+  /* Breakpoints (mobile-first) */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  line-height: 1.6;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }

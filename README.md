@@ -135,6 +135,21 @@ git config --global core.autocrlf false
    npm run dev
    ```
 
+### Démarrage avec Docker
+
+Si vous voulez lancer l'application sans installer les dépendances localement, utilisez Docker Compose depuis la racine du projet :
+
+```bash
+docker compose up --build
+```
+
+Ports utilisés en local :
+- Frontend Vite: http://localhost:3000
+- API Node: http://localhost:3310
+- MySQL (si vous devez vous y connecter depuis l'hôte): 127.0.0.1:3307
+
+Cette configuration démarre le client et le serveur dans le conteneur `web`, et la base de données dans le conteneur `database`.
+
 ## Arborescence du projet (monorepo)
 
 ```

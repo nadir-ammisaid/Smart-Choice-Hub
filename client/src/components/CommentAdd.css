@@ -5,55 +5,57 @@
 }
 .comment-section input {
   width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  padding: var(--spacing-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
 }
 .opinion-form {
-  background: white;
+  background: var(--color-bg);
   width: 95%;
   display: flex;
   align-content: center;
   flex-direction: column;
-  gap: 15px;
-  padding: 15px;
-  border-radius: 8px;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
   box-sizing: border-box;
 }
 .editor-section {
-  padding: 20px;
+  padding: var(--spacing-lg);
 }
+
 .modal-buttons,
 .exit-button {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: var(--spacing-lg);
 }
 .ql-container {
-  min-height: 150px;
-  max-height: 250px;
+  min-height: clamp(150px, 30vh, 250px);
   overflow-y: auto;
 }
 .ql-editor p {
-  padding-bottom: 25vh;
+  padding-bottom: var(--spacing-lg);
   width: 100%;
   min-height: 100%;
   box-sizing: border-box;
 }
 .modal-buttons button {
-  padding: 10px 15px;
+  padding: var(--spacing-xs) var(--spacing-sm);
   border: none;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   transition: 0.2s ease-in-out;
 }
+
 .modal-buttons button:first-child {
-  background-color: #4caf50;
-  color: white;
+  background-color: var(--color-accent);
+  color: var(--color-secondary);
 }
+
 .modal-buttons button:last-child {
-  background-color: #f44336;
-  color: white;
+  background-color: var(--color-accent-red);
+  color: var(--color-secondary);
 }
 .modal-buttons button:hover {
   opacity: 0.8;
@@ -62,30 +64,30 @@
   }
 }
 .button-exit {
-  width: 30%;
-  height: 75px;
+  width: clamp(120px, 30vw, 180px);
+  height: clamp(60px, 10vw, 75px);
 }
 .modal-editor {
-  background: white;
-  padding: 15px;
-  border-radius: 12px;
+  background: var(--color-bg);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-lg);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   width: 100%;
-  max-width: 600px;
-  height: 300px;
+  max-width: clamp(300px, 90vw, 600px);
+  height: clamp(250px, 50vh, 300px);
   overflow-y: auto;
 }
 @media (min-width: 768px) {
   .modal-editor {
     width: 90%;
-    height: 250px;
-    padding: 10px;
+    height: clamp(200px, 40vh, 250px);
+    padding: var(--spacing-md);
   }
   .modal-form {
     width: 60%;
   }
   .button-exit {
-    width: 30%;
-    height: 75px;
+    width: clamp(120px, 30vw, 180px);
+    height: clamp(60px, 10vw, 75px);
   }
 }

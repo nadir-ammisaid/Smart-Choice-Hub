@@ -1,110 +1,140 @@
 /* version mobile */
 
 * {
-  font-family: "Roboto", sans-serif;
+  font-family: var(--font-family);
 }
 
 #header-landing {
-  margin: 0.5rem 0.6rem 0.5rem 0.6rem;
+  padding: var(--spacing-xs) var(--spacing-sm);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color: var(--color-bg);
+  box-shadow: var(--shadow-sm);
 }
 
 #login-signup-container {
   display: flex;
-  justify-content: right;
   align-items: center;
-  gap: 0.9rem;
+  gap: var(--spacing-sm);
 }
 
 #logoImageMobileLanding {
-  height: 3.7rem;
+  height: clamp(3rem, 10vw, 3.7rem);
+  width: auto;
 }
 
 #login-button {
-  color: #000;
+  color: var(--color-text);
   text-align: center;
-  font-size: 1.1rem;
+  font-size: var(--font-size-base);
   font-weight: bold;
   text-decoration: none;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#login-button:hover {
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
 }
 
 #signupButtonMobileLanding {
   display: flex;
-  width: 7rem;
-  height: 2.9rem;
-  font-size: 1.1rem;
+  min-width: clamp(6rem, 15vw, 7rem);
+  height: clamp(2.5rem, 8vw, 2.9rem);
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-size-base);
   justify-content: center;
   align-items: center;
-  gap: 0.625rem;
-  flex-shrink: 0;
-  border-radius: 0.5rem;
-  background: #000;
-  color: #f5f5f5;
+  gap: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: var(--color-secondary);
   text-decoration: none;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#signupButtonMobileLanding:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
 }
 
 #signupNowButtonMobile {
   display: flex;
-  width: 9.5rem;
-  height: 3.1rem;
-  font-size: 1.1rem;
+  min-width: clamp(8rem, 20vw, 9.5rem);
+  height: clamp(2.8rem, 8vw, 3.1rem);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-lg);
   font-weight: bold;
   justify-content: center;
   align-items: center;
-  gap: 0.625rem;
-  flex-shrink: 0;
-  border-radius: 0.5rem;
-  background: #000;
-  color: #f5f5f5;
+  gap: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: var(--color-secondary);
   text-decoration: none;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#signupNowButtonMobile:hover {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
 }
 
 #requestcardImg {
-  width: 80vw;
+  width: clamp(200px, 80vw, 500px); /* Responsive image width */
+  height: auto;
+  margin: var(--spacing-md) auto;
 }
 
 #carousel-heading-text {
   text-align: center;
-  font-size: x-large;
-  margin: 1rem;
+  font-size: var(--font-size-xl);
+  margin: var(--spacing-sm);
+  color: var(--color-text);
 }
 
 #main_text {
   text-align: center;
-  font-size: large;
+  font-size: var(--font-size-lg);
+  color: var(--color-text);
+  max-width: 90%;
+  margin: 0 auto var(--spacing-md) auto;
 }
 
 #carousel {
-  height: 20vh;
-  width: 100vw;
+  height: clamp(15vh, 25vw, 30vh); /* Responsive height */
+  width: 100%;
   background: linear-gradient(
-      rgba(255, 255, 255, 0.5) /* Couleur blanche avec une opacité de 50% */,
+      rgba(255, 255, 255, 0.5),
       rgba(255, 255, 255, 0.5)
     ), url("../assets/images/people_liking.png");
-  background-size: 100vw auto;
+  background-size: cover; /* Changed to cover for better responsiveness */
   background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
-  text-shadow: 1px 1px 4px #ffffff;
+  text-shadow: var(--shadow-sm); /* Using CSS variable for shadow */
 }
 
 #alreadyaccount {
-  color: #000;
+  color: var(--color-text);
   text-align: center;
-  font-size: large;
-  margin-bottom: 4rem;
+  font-size: var(--font-size-lg);
+  margin-top: var(--spacing-sm);
+  margin-bottom: var(--spacing-xl); /* Increased bottom margin for separation */
   text-decoration: none;
-  margin-top: 1rem;
-  margin-bottom: 0;
 }
 
 #login-highlighted {
   font-weight: bold;
+  color: var(--color-primary); /* Highlighted color */
+  text-decoration: underline;
 }
 
 #mainsectionlandingpage {
@@ -112,82 +142,66 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 0;
+  padding: var(--spacing-md);
+  gap: var(--spacing-lg);
 }
 
 #startImpactingAndRequestImg {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center; /* Centered content */
   align-items: center;
-  padding: 1rem 2rem 2rem 2rem;
-  gap: 1rem;
+  padding: var(--spacing-md);
+  gap: var(--spacing-lg);
+  max-width: var(--breakpoint-lg); /* Max width for this section */
+  margin: 0 auto;
 }
 
 #mainPageLandingContainer {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: calc(100vh - 120px); /* Adjust based on navbar/footer height */
   flex: 1;
 }
 
-/* version tablet/desktop */
-
-@media (min-width: 431px) {
+/* Tablet and larger */
+@media (min-width: 768px) {
   #logoImageMobileLanding {
     display: none;
   }
 
   #carousel {
-    height: 30vh;
-    width: 100vw;
-    background: linear-gradient(
-        rgba(255, 255, 255, 0.5) /* Couleur blanche avec une opacité de 50% */,
-        rgba(255, 255, 255, 0.5)
-      ), url("../assets/images/people_liking.png");
-    background-size: 100vw auto;
-
-    background-position: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-shadow: 1px 1px 4px #ffffff;
+    height: clamp(20vh, 30vw, 40vh); /* Adjusted responsive height */
+    background-size: cover;
   }
 
   #requestcardImg {
-    width: 30vw;
+    width: clamp(250px, 30vw, 400px); /* Adjusted responsive image width */
   }
 
   #startImpactingAndRequestImg {
-    display: flex;
     flex-direction: row-reverse;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20rem;
-    padding: 0rem 9rem 0rem 9rem;
+    justify-content: space-around;
+    padding: var(--spacing-xl);
+    gap: var(--spacing-xl);
   }
 
   #main_text {
-    font-size: 1.7rem;
+    font-size: var(--font-size-xl);
+    text-align: left; /* Aligned text to left for desktop */
+    max-width: 50%; /* Constrain width */
   }
 
   #carousel-heading-text {
-    text-align: center;
-    font-size: xx-large;
-    margin: 1rem;
+    font-size: var(--font-size-2xl);
+    margin: var(--spacing-md);
   }
 
   #header-landing {
-    margin: 0.5rem 1.6rem 0.5rem 1.6rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: var(--spacing-sm) var(--spacing-lg);
   }
 
   #login-signup-container {
-    display: flex;
-    justify-content: right;
-    align-items: center;
-    gap: 1.5rem;
+    gap: var(--spacing-md);
   }
 }

@@ -1,45 +1,47 @@
 .footer-container {
   display: flex;
-  padding-bottom: 1rem;
-  padding-top: 0.5rem;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
-  margin-top: auto; /* Cette ligne garantit que le footer reste en bas */
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-top: var(--spacing-xl); /* Adjusted margin-top for better spacing */
+  background-color: var(--color-bg); /* Assuming a background color for the footer */
+  box-shadow: var(--shadow-sm); /* Added a subtle shadow */
 }
 
 .footer-text {
   text-align: center;
-  font-family: "Roboto", sans-serif;
-  font-size: 1rem;
-  font-style: normal;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
 }
 
 .footer-logos {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-sm);
   justify-content: center;
 }
 
 .footer-logo {
-  width: 2.3rem;
+  width: clamp(1.8rem, 6vw, 2.3rem); /* Responsive logo size */
+  height: auto;
 }
-/* Media Query pour la version mobile */
-@media (min-width: 431px) {
+
+/* Tablet and larger */
+@media (min-width: 768px) {
   .footer-container {
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    padding: var(--spacing-sm) var(--spacing-lg);
   }
 
   .footer-text {
     text-align: left;
-    margin-left: 1rem;
+    margin-left: 0; /* Remove specific margin for desktop */
   }
 
   .footer-logos {
     justify-content: flex-end;
-    margin-right: 1rem;
+    margin-right: 0; /* Remove specific margin for desktop */
   }
 }

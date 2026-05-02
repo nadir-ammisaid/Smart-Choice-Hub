@@ -1,29 +1,30 @@
 #button_icon-update-comment {
   display: flex;
-  width: 9.5rem;
-  height: 3.1rem;
-  font-size: 1.1rem;
+  width: clamp(8rem, 25vw, 9.5rem);
+  height: clamp(2.8rem, 8vw, 3.1rem);
+  font-size: clamp(1rem, 3vw, 1.1rem);
   font-weight: bold;
   justify-content: center;
   align-items: center;
-  gap: 0.625rem;
+  gap: var(--spacing-xs);
   flex-shrink: 0;
-  border-radius: 0.5rem;
-  background: #000;
-  color: #f5f5f5;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-secondary);
   text-decoration: none;
   cursor: pointer;
-  margin: 1rem;
+  margin: var(--spacing-md);
+  border: none;
+  transition: all 200ms ease-out;
+}
 
-  &:hover {
-    background-color: #fff;
-    color: #000;
-    border: 1px solid #000;
-    transition: all 200ms ease-out;
-  }
+#button_icon-update-comment:hover {
+  background-color: var(--color-bg);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
 
-  &:active {
-    background-color: #000;
-    color: #fff;
-  }
+#button_icon-update-comment:active {
+  background-color: var(--color-primary);
+  color: var(--color-bg);
 }
