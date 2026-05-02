@@ -36,7 +36,7 @@ const login: RequestHandler = async (req, res, next) => {
       res.cookie("token", token, {
         httpOnly: true, // Empêche l'accès depuis JavaScript
         secure: process.env.NODE_ENV === "production", // Active HTTPS en prod
-        sameSite: "strict", // Protège contre les attaques CSRF
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Required for cross-site cookies in production
         maxAge: 3600000, // Expiration dans 1h
       });
       res.sendStatus(200);
@@ -71,7 +71,7 @@ const logout: RequestHandler = async (req, res, next) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
     res.status(200).json({ message: "Deconnected" });
   } catch (err) {
