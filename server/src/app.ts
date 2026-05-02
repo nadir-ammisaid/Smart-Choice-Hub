@@ -20,9 +20,39 @@ const app = express();
 
 import cors from "cors";
 
-if (process.env.CLIENT_URL != null) {
-  app.use(cors({ origin: [process.env.CLIENT_URL], credentials: true }));
-}
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "https://smartchoicehub.vercel.app",
+  "http://localhost:3000",
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      // Allow requests without an origin, such as curl, Railway healthchecks, or server-to-server requests.
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+
+      // Normalize trailing slashes to avoid blocking:
+      // https://smartchoicehub.vercel.app/
+      // when the allowed origin is:
+      // https://smartchoicehub.vercel.app
+      const normalizedOrigin = origin.replace(/\/$/, "");
+
+      if (allowedOrigins.includes(normalizedOrigin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
 // If you need to allow extra origins, you can add something like this:
 
