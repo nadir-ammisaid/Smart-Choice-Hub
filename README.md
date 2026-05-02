@@ -143,7 +143,7 @@ Si vous voulez lancer l'application sans installer les dépendances localement, 
 docker compose up --build
 ```
 
-Ports utilisés en local :
+Ports utilisés en local : 
 - Frontend Vite: http://localhost:3000
 - API Node: http://localhost:3310
 - MySQL (si vous devez vous y connecter depuis l'hôte): 127.0.0.1:3307
