@@ -94,9 +94,11 @@ function Profile() {
               <div id="avatar_container">
                 <img
                   src={
-                    user.avatar
-                      ? `${import.meta.env.VITE_API_URL}/${user.avatar}`
-                      : defaultAvatar
+                    avatarFile
+                      ? URL.createObjectURL(avatarFile)
+                      : user.avatar
+                        ? `${import.meta.env.VITE_API_URL}/${user.avatar}`
+                        : defaultAvatar
                   }
                   alt="avatar pic"
                   id="avatar"
