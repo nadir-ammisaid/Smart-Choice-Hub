@@ -1,12 +1,10 @@
-import client from "./client";
+import prisma from "../src/lib/prisma";
 
 // Try to get a connection to the database
-client
-  .getConnection()
-  .then((connection) => {
-    console.info(`Using database ${process.env.DB_NAME}`);
-
-    connection.release();
+prisma
+  .$connect()
+  .then(() => {
+    console.info("Using database connection via Prisma");
   })
   .catch((error: Error) => {
     console.warn(

@@ -1,15 +1,14 @@
 // Load environment variables from .env file
 import "dotenv/config";
+import { afterAll, describe, expect, test } from "@jest/globals";
 
 import fs from "node:fs";
 
-import databaseClient from "../database/client";
-
-import type { Rows } from "../database/client";
+import prisma from "../src/lib/prisma";
 
 // Close the database connection after all tests have run
-afterAll((done) => {
-  databaseClient.end().then(done);
+afterAll(async () => {
+  await prisma.$disconnect();
 });
 
 // Test suite for environment installation
@@ -30,18 +29,16 @@ describe("Installation", () => {
 
     try {
       // Check if the connection is successful
-      await databaseClient.getConnection();
+      await prisma.$connect();
     } catch (error) {
       expect(error).toBeDefined();
     }
   });
 
   // Test: Check if the database migration scripts have been executed
-  test("You have executed the db:migrate scripts", async () => {
-    // Query the 'user' table to check if any data has been inserted
-    const [rows] = await databaseClient.query<Rows>("select * from user");
+  test("You have executed the Prisma migration scripts", async () => {
+    const rows = await prisma.user.findMany();
 
-    // Expecting rows to be returned, indicating successful migration
     expect(rows.length).toBeGreaterThanOrEqual(0);
   });
 });

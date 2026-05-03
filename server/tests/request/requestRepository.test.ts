@@ -1,22 +1,40 @@
 import "dotenv/config";
-import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import databaseClient from "../../database/client";
+import { afterEach, describe, expect, it, jest } from "@jest/globals";
+import prisma from "../../src/lib/prisma";
 import requestRepository from "../../src/modules/request/requestRepository";
 
-// Mock complet de la base de données
-jest.mock("../../database/client");
+afterEach(() => {
+  jest.restoreAllMocks();
+});
 
 describe("requestRepository", () => {
-  beforeEach(() => {
-    // Réinitialiser les mocks avant chaque test
-    jest.clearAllMocks();
-  });
-
   describe("read", () => {
     it("should return a request when id is valid", async () => {
-      // Préparer les données de mock
-      const mockRequest = {
+      jest.spyOn(prisma.request, "findUnique").mockResolvedValueOnce({
         id: 1,
+        date: new Date("2024-03-15T00:00:00.000Z"),
+        title: "Test Request",
+        tag1: "Tag1",
+        tag2: "Tag2",
+        details1: "Detail 1",
+        details2: "Detail 2",
+        details3: "Detail 3",
+        userId: 1,
+        user: {
+          firstName: "John",
+          lastName: "Doe",
+          avatar: null,
+        },
+      } as never);
+
+      const result = await requestRepository.read(1);
+
+      expect(prisma.request.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { id: 1 } }),
+      );
+      expect(result).toEqual({
+        id: 1,
+        date: "2024-03-15",
         title: "Test Request",
         tag1: "Tag1",
         tag2: "Tag2",
@@ -24,47 +42,26 @@ describe("requestRepository", () => {
         details2: "Detail 2",
         details3: "Detail 3",
         user_id: 1,
-      };
-
-      // Configurer le mock pour retourner les données attendues =>  Mock de la requête SELECT
-      // @ts-ignore - Ignorer l'erreur de type pour le test
-      databaseClient.query.mockResolvedValueOnce([[mockRequest], []]);
-
-      // Appeler la fonction à tester
-      const result = await requestRepository.read(1);
-
-      // Vérifier que la fonction a été appelée correctement
-      expect(databaseClient.query).toHaveBeenCalledWith(
-        expect.stringContaining("SELECT"),
-        [1],
-      );
-
-      // Vérifier le résultat
-      expect(result).toEqual(mockRequest);
+        firstname: "John",
+        lastname: "Doe",
+        avatar: null,
+      });
     });
 
-    it("should return undefined when request is not found", async () => {
-      // Configurer le mock pour retourner un tableau vide
-      // @ts-ignore - Ignorer l'erreur de type pour le test
-      databaseClient.query.mockResolvedValueOnce([[], []]);
+    it("should return null when request is not found", async () => {
+      jest.spyOn(prisma.request, "findUnique").mockResolvedValueOnce(null);
 
-      // Appeler la fonction à tester
       const result = await requestRepository.read(999);
 
-      // Vérifier que la fonction a été appelée correctement
-      expect(databaseClient.query).toHaveBeenCalledWith(
-        expect.stringContaining("SELECT"),
-        [999],
+      expect(prisma.request.findUnique).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { id: 999 } }),
       );
-
-      // Vérifier le résultat - modifié pour correspondre au comportement réel
-      expect(result).toBeUndefined();
+      expect(result).toBeNull();
     });
   });
 
   describe("create", () => {
     it("should create a new request and return insert ID", async () => {
-      // Préparer les données de test
       const newRequest = {
         title: "New Request",
         tag1: "Tag1",
@@ -75,21 +72,17 @@ describe("requestRepository", () => {
         user_id: 1,
       };
 
-      // Configurer le mock pour retourner les données attendues
-      const mockInsertResult = { insertId: 123 };
-      // @ts-ignore - Ignorer l'erreur de type pour le test
-      databaseClient.query.mockResolvedValueOnce([mockInsertResult, []]);
+      jest.spyOn(prisma.request, "create").mockResolvedValueOnce({
+        id: 123,
+      } as never);
 
-      // Appeler la fonction à tester
       const result = await requestRepository.create(newRequest);
 
-      // Vérifier que la fonction a été appelée correctement
-      expect(databaseClient.query).toHaveBeenCalledWith(
-        expect.stringContaining("insert"),
-        expect.any(Array),
+      expect(prisma.request.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ title: "New Request" }),
+        }),
       );
-
-      // Vérifier le résultat - modifié pour correspondre au comportement réel
       expect(result).toBe(123);
     });
   });

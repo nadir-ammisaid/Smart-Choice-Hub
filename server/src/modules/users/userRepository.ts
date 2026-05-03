@@ -1,14 +1,14 @@
-import databaseClient from "../../../database/client";
-
-import type { Result, Rows } from "../../../database/client";
+import prisma from "../../lib/prisma";
 
 type User = {
   id: number;
   firstname: string;
   lastname: string;
   birthday: string;
+  avatar?: string | null;
   email: string;
   hashed_password: string;
+  role_id?: number | null;
 };
 type UserToken = {
   id: number;
@@ -21,79 +21,85 @@ type UserToken = {
 };
 
 class UserRepository {
+  private static formatDate(value: Date) {
+    const year = value.getUTCFullYear();
+    const month = `${value.getUTCMonth() + 1}`.padStart(2, "0");
+    const day = `${value.getUTCDate()}`.padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+  private static toUserRecord(user: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    birthday: Date;
+    avatar: string | null;
+    email: string;
+    hashedPassword: string;
+    roleId: number | null;
+  }): User {
+    return {
+      id: user.id,
+      firstname: user.firstName,
+      lastname: user.lastName,
+      birthday: UserRepository.formatDate(user.birthday),
+      avatar: user.avatar,
+      email: user.email,
+      hashed_password: user.hashedPassword,
+      role_id: user.roleId,
+    };
+  }
+
   // The C of CRUD - Create operation
 
   async create(user: Omit<User, "id">) {
-    // Execute the SQL INSERT query to add a new user to the "user" table
-    const [result] = await databaseClient.query<Result>(
-      "insert into user (firstname, lastname, birthday, email, hashed_password) values ( ?, ?, ?, ?, ?)",
-      [
-        user.firstname,
-        user.lastname,
-        user.birthday,
-        user.email,
-        user.hashed_password,
-      ],
-    );
+    const createdUser = await prisma.user.create({
+      data: {
+        firstName: user.firstname,
+        lastName: user.lastname,
+        birthday: new Date(user.birthday),
+        email: user.email,
+        hashedPassword: user.hashed_password,
+      },
+      select: {
+        id: true,
+      },
+    });
 
-    // Return the ID of the newly inserted user
-    return result.insertId;
+    return createdUser.id;
   }
 
   // The Rs of CRUD - Read operations
 
   async read(id: number) {
-    // Execute the SQL SELECT query to retrieve a specific user by users ID
-    const [rows] = await databaseClient.query<Rows>(
-      `SELECT 
-        id, 
-        firstname, 
-        lastname, 
-        DATE_FORMAT(birthday, '%Y-%m-%d') AS birthday, 
-        avatar,
-        email, 
-        hashed_password, 
-        role_id 
-      FROM user 
-      WHERE id = ?`,
-      [id],
-    );
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
 
-    // Return the first row of the result, which represents the user
-    return rows[0] as User;
+    if (!user) {
+      return null;
+    }
+
+    return UserRepository.toUserRecord(user);
   }
 
   async readAll() {
-    // Execute the SQL SELECT query to retrieve all users from the "user" table
-    const [rows] = await databaseClient.query<Rows>(`select  id, 
-        firstname, 
-        lastname, 
-        DATE_FORMAT(birthday, '%Y-%m-%d') AS birthday, 
-        avatar,
-        email, 
-        hashed_password, 
-        role_id  from user `);
+    const users = await prisma.user.findMany();
 
-    // Return the array of users
-    return rows as User[];
+    return users.map(UserRepository.toUserRecord);
   }
 
   async readByEmailWithPassword(email: string) {
-    const [rows] = await databaseClient.query<Rows>(
-      `SELECT  id, 
-        firstname, 
-        lastname, 
-        DATE_FORMAT(birthday, '%Y-%m-%d') AS birthday, 
-        avatar,
-        email, 
-        hashed_password, 
-        role_id 
-       FROM user 
-       WHERE email = ?`,
-      [email],
-    );
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
 
-    return rows[0] as UserToken;
+    if (!user) {
+      return null;
+    }
+
+    return UserRepository.toUserRecord(user) as UserToken;
   }
 
   // The U of CRUD - Update operation
@@ -103,33 +109,36 @@ class UserRepository {
   // }
 
   async update(user: User) {
-    // Execute the SQL UPDATE query to update an existing user in the "user" table
-    const [result] = await databaseClient.query<Result>(
-      "UPDATE `user` SET firstname = ?, lastname = ?, birthday = ? WHERE id = ?",
-      [user.firstname, user.lastname, user.birthday, user.id],
-    );
+    const result = await prisma.user.updateMany({
+      where: { id: user.id },
+      data: {
+        firstName: user.firstname,
+        lastName: user.lastname,
+        birthday: new Date(user.birthday),
+      },
+    });
 
-    // Return how many rows were affected
-    return result.affectedRows;
+    return result.count;
   }
 
   async createAvatar(userId: number, avatarPath: string) {
-    const [result] = await databaseClient.query<Result>(
-      "UPDATE user SET avatar = ? WHERE id = ?",
-      [avatarPath, userId],
-    );
-    return result;
+    const result = await prisma.user.updateMany({
+      where: { id: userId },
+      data: { avatar: avatarPath },
+    });
+
+    return result.count;
   }
 
   // The D of CRUD - Delete operation
   // TODO: Implement the delete operation to remove an item by its ID
 
   async delete(id: number) {
-    const [result] = await databaseClient.query<Result>(
-      "delete from user where id=? ",
-      [id],
-    );
-    return result.affectedRows;
+    const result = await prisma.user.deleteMany({
+      where: { id },
+    });
+
+    return result.count;
   }
 }
 

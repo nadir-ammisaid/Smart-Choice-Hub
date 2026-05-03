@@ -1,91 +1,154 @@
-import databaseClient from "../../../database/client";
-import type { Result, Rows } from "../../../database/client";
+import prisma from "../../lib/prisma";
 
 interface Request {
   id: number;
+  date?: string;
   title: string;
   tag1: string;
-  tag2: string;
+  tag2: string | null;
   details1: string;
-  details2: string;
-  details3: string;
+  details2: string | null;
+  details3: string | null;
+  user_id?: number;
+  firstname?: string;
+  lastname?: string;
+  avatar?: string | null;
 }
 interface RequestAdd {
   id: number;
+  date?: string;
   title: string;
   tag1: string;
-  tag2: string;
+  tag2: string | null;
   details1: string;
-  details2: string;
-  details3: string;
+  details2: string | null;
+  details3: string | null;
   user_id: number;
+  firstname?: string;
+  lastname?: string;
+  avatar?: string | null;
 }
 
 class RequestRepository {
-  async create(request: Omit<RequestAdd, "id">) {
-    // Execute the SQL INSERT query to add a new request to the "request" table
-    const [result] = await databaseClient.query<Result>(
-      "insert into request (title,tag1,tag2,details1,details2,details3,user_id) values ( ?, ?, ?, ?, ?, ?, ?)",
-      [
-        request.title,
-        request.tag1,
-        request.tag2,
-        request.details1,
-        request.details2,
-        request.details3,
-        request.user_id,
-      ],
-    );
+  private static formatDate(value: Date) {
+    const year = value.getUTCFullYear();
+    const month = `${value.getUTCMonth() + 1}`.padStart(2, "0");
+    const day = `${value.getUTCDate()}`.padStart(2, "0");
 
-    // Return the ID of the newly inserted request
-    return result.insertId;
+    return `${year}-${month}-${day}`;
+  }
+
+  private static toRequestRow(request: {
+    id: number;
+    date: Date;
+    title: string;
+    tag1: string;
+    tag2: string | null;
+    details1: string;
+    details2: string | null;
+    details3: string | null;
+    userId: number;
+    user: {
+      firstName: string;
+      lastName: string;
+      avatar: string | null;
+    };
+  }): RequestAdd {
+    return {
+      id: request.id,
+      date: RequestRepository.formatDate(request.date),
+      title: request.title,
+      tag1: request.tag1,
+      tag2: request.tag2,
+      details1: request.details1,
+      details2: request.details2,
+      details3: request.details3,
+      user_id: request.userId,
+      firstname: request.user.firstName,
+      lastname: request.user.lastName,
+      avatar: request.user.avatar,
+    };
+  }
+
+  async create(request: Omit<RequestAdd, "id">) {
+    const createdRequest = await prisma.request.create({
+      data: {
+        title: request.title,
+        tag1: request.tag1,
+        tag2: request.tag2 ?? null,
+        details1: request.details1,
+        details2: request.details2 ?? null,
+        details3: request.details3 ?? null,
+        userId: request.user_id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return createdRequest.id;
   }
 
   async readAll() {
-    const [rows] = await databaseClient.query<Rows>(
-      `SELECT request.*, DATE_FORMAT(request.date, '%Y-%m-%d') AS date , user.firstname, user.lastname,user.avatar
-      FROM request JOIN user ON user.id= request.user_id`,
-    );
+    const requests = await prisma.request.findMany({
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            avatar: true,
+          },
+        },
+      },
+    });
 
-    return rows as Request[];
+    return requests.map(RequestRepository.toRequestRow);
   }
 
   //Search a request via id
   async read(id: number) {
-    const [rows] = await databaseClient.query<Rows>(
-      `SELECT request.*, DATE_FORMAT(request.date, '%Y-%m-%d') AS date , user.firstname, user.lastname,user.avatar
-      FROM request JOIN user ON user.id= request.user_id where request.id=?`,
-      [id],
-    );
+    const request = await prisma.request.findUnique({
+      where: { id },
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            avatar: true,
+          },
+        },
+      },
+    });
 
-    return rows[0] as RequestAdd;
+    if (!request) {
+      return null;
+    }
+
+    return RequestRepository.toRequestRow(request);
   }
 
   async update(request: Request) {
-    // Execute the SQL UPDATE query to update an existing category in the "category" table
-    const [result] = await databaseClient.query<Result>(
-      "update request set title = ?, tag1 = ?,tag2 = ?,details1 = ?,details2 = ?,details3 = ? where id = ?",
-      [
-        request.title,
-        request.tag1,
-        request.tag2,
-        request.details1,
-        request.details2,
-        request.details3,
-        request.id,
-      ],
-    );
+    const result = await prisma.request.updateMany({
+      where: { id: request.id },
+      data: {
+        title: request.title,
+        tag1: request.tag1,
+        tag2: request.tag2 ?? null,
+        details1: request.details1,
+        details2: request.details2 ?? null,
+        details3: request.details3 ?? null,
+      },
+    });
 
-    // Return how many rows were affected
-    return result.affectedRows;
+    return result.count;
   }
 
   async delete(id: number) {
-    const [result] = await databaseClient.query<Result>(
-      "delete from request where id=? ",
-      [id],
-    );
-    return result.affectedRows;
+    const result = await prisma.request.deleteMany({
+      where: { id },
+    });
+
+    return result.count;
   }
 }
 export default new RequestRepository();

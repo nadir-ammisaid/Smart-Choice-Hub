@@ -14,6 +14,7 @@ services:
       DB_USER: user
       DB_PASSWORD: password
       DB_NAME: schdb
+      DATABASE_URL: mysql://user:password@database:3306/schdb
       CLIENT_URL: http://localhost:3000
       VITE_API_URL: http://localhost:3310
     depends_on:

@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id       Int    @id @default(autoincrement())
+  roleName String @map("rolename") @db.VarChar(50)
+  users    User[]
+
+  @@map("role")
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  firstName      String    @map("firstname") @db.VarChar(50)
+  lastName       String    @map("lastname") @db.VarChar(50)
+  birthday       DateTime  @db.Date
+  avatar         String?   @db.VarChar(255)
+  email          String    @unique @db.VarChar(50)
+  hashedPassword String    @map("hashed_password") @db.VarChar(255)
+  roleId         Int?      @default(2) @map("role_id")
+  role           Role?     @relation(fields: [roleId], references: [id], onDelete: SetNull, map: "fk_user_role")
+  requests       Request[]
+  comments       Comment[]
+
+  @@map("user")
+}
+
+model Request {
+  id       Int       @id @default(autoincrement())
+  date     DateTime  @default(now()) @db.DateTime(0)
+  title    String    @db.VarChar(50)
+  tag1     String    @db.VarChar(50)
+  tag2     String?   @db.VarChar(50)
+  details1 String    @db.Text
+  details2 String?   @db.Text
+  details3 String?   @db.Text
+  userId   Int       @map("user_id")
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade, map: "fk_request_user")
+  comments Comment[]
+
+  @@map("request")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  details   String   @db.Text
+  date      DateTime @default(now()) @db.DateTime(0)
+  userId    Int      @default(1) @map("user_id")
+  requestId Int      @default(1) @map("request_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "fk_comment_user")
+  request   Request  @relation(fields: [requestId], references: [id], onDelete: Cascade, map: "fk_comment_request")
+
+  @@map("comment")
+}

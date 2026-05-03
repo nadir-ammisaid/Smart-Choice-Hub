@@ -1,6 +1,4 @@
-import databaseClient from "../../../database/client";
-
-import type { Result, Rows } from "../../../database/client";
+import prisma from "../../lib/prisma";
 
 type Comment = {
   details: string;
@@ -12,79 +10,109 @@ type Newcomment = {
   request_id: number;
 };
 type RequestComment = {
+  id: number;
+  date: string;
   details: string;
   user_id: number;
   request_id: number;
   firstname: string;
   lastname: string;
-  avatar: string;
+  avatar: string | null;
 };
 
 class CommentRepository {
+  private static formatDate(value: Date) {
+    const year = value.getUTCFullYear();
+    const month = `${value.getUTCMonth() + 1}`.padStart(2, "0");
+    const day = `${value.getUTCDate()}`.padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
   // The C of CRUD - Create operation
 
   async create(newComment: Omit<Newcomment, "id">) {
-    // Execute the SQL INSERT query to add a new request to the "request" table
-    const [result] = await databaseClient.query<Result>(
-      "insert into comment (details,user_id,request_id) values ( ?, ?, ?)",
-      [newComment.details, newComment.user_id, newComment.request_id],
-    );
+    const createdComment = await prisma.comment.create({
+      data: {
+        details: newComment.details,
+        userId: newComment.user_id,
+        requestId: newComment.request_id,
+      },
+      select: {
+        id: true,
+      },
+    });
 
-    // Return the ID of the newly inserted request
-    return result.insertId;
+    return createdComment.id;
   }
 
   // The Rs of CRUD - Read operations
   async read(id: number) {
-    // Execute the SQL SELECT query to retrieve a specific comment by comments ID
-    const [rows] = await databaseClient.query<Rows>(
-      `SELECT 
-        details
-      FROM comment 
-      WHERE id=?`,
-      [id],
-    );
+    const comment = await prisma.comment.findUnique({
+      where: { id },
+      select: {
+        details: true,
+      },
+    });
 
-    // Return the first row of the result, which represents the comment
-    return rows[0] as Comment;
+    if (!comment) {
+      return null;
+    }
+
+    return {
+      details: comment.details,
+      id,
+    };
   }
 
   async update(comment: Comment) {
-    const [result] = await databaseClient.query<Result>(
-      "update comment set details = ? where id = ?",
-      [comment.details, comment.id],
-    );
+    const result = await prisma.comment.updateMany({
+      where: { id: comment.id },
+      data: {
+        details: comment.details,
+      },
+    });
 
-    return result.affectedRows;
+    return result.count;
   }
 
   async readAll(request_id: number) {
-    // Execute the SQL SELECT query to retrieve all comments from the "comment" table
-    const [rows] = await databaseClient.query<Rows>(
-      `SELECT 
-      comment.id, 
-      DATE_FORMAT(comment.date, '%Y-%m-%d') AS date, 
-      comment.details,
-      comment.user_id, 
-      comment.request_id,
-      user.firstname,
-      user.lastname,
-      user.avatar
-    FROM comment JOIN user ON user.id=comment.user_id WHERE comment.request_id=?`,
-      [request_id],
+    const comments = await prisma.comment.findMany({
+      where: {
+        requestId: request_id,
+      },
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            avatar: true,
+          },
+        },
+      },
+    });
 
-      // Return the array of users
+    return comments.map(
+      (comment): RequestComment => ({
+        id: comment.id,
+        date: CommentRepository.formatDate(comment.date),
+        details: comment.details,
+        user_id: comment.userId,
+        request_id: comment.requestId,
+        firstname: comment.user.firstName,
+        lastname: comment.user.lastName,
+        avatar: comment.user.avatar,
+      }),
     );
-    return rows as RequestComment[];
   }
 
   // The D of CRUD - Delete operation
   async delete(id: number) {
-    const [comment] = await databaseClient.query<Result>(
-      "delete from comment where id=? ",
-      [id],
-    );
-    return comment.affectedRows;
+    const result = await prisma.comment.deleteMany({
+      where: { id },
+    });
+
+    return result.count;
   }
 }
 

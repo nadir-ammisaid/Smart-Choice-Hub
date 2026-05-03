@@ -1,6 +1,4 @@
-import databaseClient from "../../../database/client";
-
-import type { Result, Rows } from "../../../database/client";
+import prisma from "../../lib/prisma";
 
 type Item = {
   id: number;
@@ -12,35 +10,26 @@ class ItemRepository {
   // The C of CRUD - Create operation
 
   async create(item: Omit<Item, "id">) {
-    // Execute the SQL INSERT query to add a new item to the "item" table
-    const [result] = await databaseClient.query<Result>(
-      "insert into item (title, user_id) values (?, ?)",
-      [item.title, item.user_id],
-    );
+    await prisma.$executeRaw`insert into item (title, user_id) values (${item.title}, ${item.user_id})`;
+    const insertedRows = await prisma.$queryRaw<Array<{ id: number }>>`
+      select last_insert_id() as id
+    `;
 
-    // Return the ID of the newly inserted item
-    return result.insertId;
+    return insertedRows[0]?.id ?? 0;
   }
 
   // The Rs of CRUD - Read operations
 
   async read(id: number) {
-    // Execute the SQL SELECT query to retrieve a specific item by its ID
-    const [rows] = await databaseClient.query<Rows>(
-      "select * from item where id = ?",
-      [id],
-    );
+    const rows = await prisma.$queryRaw<Item[]>`
+      select * from item where id = ${id}
+    `;
 
-    // Return the first row of the result, which represents the item
-    return rows[0] as Item;
+    return rows[0];
   }
 
   async readAll() {
-    // Execute the SQL SELECT query to retrieve all items from the "item" table
-    const [rows] = await databaseClient.query<Rows>("select * from item");
-
-    // Return the array of items
-    return rows as Item[];
+    return prisma.$queryRaw<Item[]>`select * from item`;
   }
 
   // The U of CRUD - Update operation
