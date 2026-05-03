@@ -26,16 +26,24 @@ Variables optionnelles pour le volume du seed:
 
 ### Railway: seed one-shot (beaucoup de données)
 
-Si tu veux injecter beaucoup de données en production **une seule fois**:
+Si tu veux injecter beaucoup de données en production **une seule fois** (workflow validé):
 
 1. Remplacer temporairement la commande pre-deploy par:
-   - `ALLOW_PROD_SEED=true npm run db:seed --workspace=@js-monorepo/server`
-2. Déployer une fois (le seed s'exécute).
-3. Remettre la commande pre-deploy standard:
+   - `sh -c 'npm run db:migrate:deploy --workspace=@js-monorepo/server && ALLOW_PROD_SEED=true npm run db:seed --workspace=@js-monorepo/server'`
+2. Lancer un redeploy.
+3. Une fois terminé, remettre la commande pre-deploy standard:
    - `npm run db:migrate:deploy --workspace=@js-monorepo/server`
 4. Redéployer.
 
 Ne pas laisser `db:seed` en pre-deploy en continu.
+
+### Railway: seed léger pour test rapide
+
+Pour limiter la volumétrie au premier essai, utiliser temporairement:
+
+- `sh -c 'npm run db:migrate:deploy --workspace=@js-monorepo/server && ALLOW_PROD_SEED=true SEED_USERS=5 SEED_REQUESTS_PER_USER=2 SEED_COMMENTS_PER_REQUEST=2 npm run db:seed --workspace=@js-monorepo/server'`
+
+Puis revenir au pre-deploy standard après validation.
 
 ## Important
 
