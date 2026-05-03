@@ -77,7 +77,7 @@ Grâce à cette architecture modulaire et sécurisée, Smart Choice Hub assure u
 ## Stack
 
 - Client : React + TypeScript + Vite
-- Serveur : Node.js + Express + MySQL
+- Serveur : Node.js + Express + MySQL + Prisma
 - Authentification sécurisée via JWT et hashage argon2
 - CSS3 : Styling avec Styled-components
 - Hébergement : Frontend sur Netlify, Backend (API & base de données) sur Railway
@@ -123,11 +123,13 @@ git config --global core.autocrlf false
    * `server/.env`
      ```
      DB_HOST=localhost
+     DB_PORT=3306
      DB_USER=root
      DB_PASSWORD=motdepasse
      DB_NAME=smart_choice
-     JWT_SECRET=supersecretkey
-     FRONT_URL=http://localhost:5173
+     DATABASE_URL=mysql://root:motdepasse@localhost:3306/smart_choice
+     APP_SECRET=supersecretkey
+     CLIENT_URL=http://localhost:3000
      ```
 
 5. Lancer le projet :
@@ -228,12 +230,27 @@ VITE_API_URL=http://localhost:3310/api
 ### server/.env
 ```
 DB_HOST=localhost
+DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=root
 DB_NAME=smart_choice
-JWT_SECRET=supersecretkey
+DATABASE_URL=mysql://root:root@localhost:3306/smart_choice
+APP_SECRET=supersecretkey
 CLIENT_URL=http://localhost:3000
 ```
+
+## Base de données (Prisma)
+
+Commandes principales :
+
+- `npm run db:generate --workspace=@js-monorepo/server`
+- `npm run db:migrate:dev --workspace=@js-monorepo/server`
+- `npm run db:migrate:deploy --workspace=@js-monorepo/server`
+- `npm run db:migrate:baseline --workspace=@js-monorepo/server` (une seule fois sur base déjà existante)
+- `npm run db:seed --workspace=@js-monorepo/server`
+
+Procédures Railway (seed one-shot, clear avant seed, retour pre-deploy standard) :
+- voir [DATABASE.md](./DATABASE.md)
 
 ## Sécurité
 
@@ -242,7 +259,7 @@ CLIENT_URL=http://localhost:3000
 * Middleware `verifyToken` pour protéger les routes sensibles
 * Vérification de l'auteur via `isPoster` avant modification ou suppression
 * Validation des champs côté client et serveur
-* Requêtes SQL préparées via `mysql2/promise` pour éviter les injections
+* Accès DB via Prisma Client (et requêtes paramétrées)
 
 ## Auteur
 
@@ -338,7 +355,7 @@ Thanks to this modular and secure architecture, Smart Choice Hub ensures efficie
 ## Stack
 
 - Client: React + TypeScript + Vite
-- Server: Node.js + Express + MySQL
+- Server: Node.js + Express + MySQL + Prisma
 - Secure authentication via JWT and argon2 hashing
 - CSS3: Styling with Styled-components
 - Hosting: Frontend on Netlify, Backend (API & database) on Railway
@@ -384,11 +401,13 @@ git config --global core.autocrlf false
    * `server/.env`
      ```
      DB_HOST=localhost
+     DB_PORT=3306
      DB_USER=root
      DB_PASSWORD=password
      DB_NAME=smart_choice
-     JWT_SECRET=supersecretkey
-     FRONT_URL=http://localhost:5173
+     DATABASE_URL=mysql://root:password@localhost:3306/smart_choice
+     APP_SECRET=supersecretkey
+     CLIENT_URL=http://localhost:3000
      ```
 
 5. Launch the project:
@@ -474,12 +493,27 @@ VITE_API_URL=http://localhost:3310/api
 ### server/.env
 ```
 DB_HOST=localhost
+DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=root
 DB_NAME=smart_choice
-JWT_SECRET=supersecretkey
-FRONT_URL=http://localhost:5173
+DATABASE_URL=mysql://root:root@localhost:3306/smart_choice
+APP_SECRET=supersecretkey
+CLIENT_URL=http://localhost:3000
 ```
+
+## Database (Prisma)
+
+Main commands:
+
+- `npm run db:generate --workspace=@js-monorepo/server`
+- `npm run db:migrate:dev --workspace=@js-monorepo/server`
+- `npm run db:migrate:deploy --workspace=@js-monorepo/server`
+- `npm run db:migrate:baseline --workspace=@js-monorepo/server` (one time on an existing production database)
+- `npm run db:seed --workspace=@js-monorepo/server`
+
+Railway procedures (one-shot seed, clear-before-seed, then restore standard pre-deploy):
+- see [DATABASE.md](./DATABASE.md)
 
 ## Security
 
@@ -488,7 +522,7 @@ FRONT_URL=http://localhost:5173
 * `verifyToken` middleware to protect sensitive routes
 * Author verification via `isPoster` before modification or deletion
 * Field validation on client and server sides
-* Prepared SQL queries via `mysql2/promise` to prevent injections
+* Database access via Prisma Client (and parameterized queries)
 
 ## Author
 

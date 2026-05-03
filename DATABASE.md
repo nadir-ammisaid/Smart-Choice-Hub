@@ -19,19 +19,35 @@ Variables optionnelles pour le volume du seed:
 - `SEED_REQUESTS_PER_USER` (défaut: `4`)
 - `SEED_COMMENTS_PER_REQUEST` (défaut: `6`)
 
+Variables optionnelles pour vider la base avant seed:
+
+- `CLEAR_BEFORE_SEED=true`
+- `ALLOW_PROD_RESET=true` (requis en production si `CLEAR_BEFORE_SEED=true`)
+
 ### Production
 
 - `npm run db:migrate:baseline --workspace=@js-monorepo/server` (une seule fois si la base existe déjà)
 - `npm run db:migrate:deploy --workspace=@js-monorepo/server`
 
-### Railway: seed one-shot (beaucoup de données)
+### Railway: peupler une fois (sans vider)
 
-Si tu veux injecter beaucoup de données en production **une seule fois** (workflow validé):
+Objectif: ajouter des données de test sans supprimer l'existant.
 
-1. Remplacer temporairement la commande pre-deploy par:
+1. Commande pre-deploy temporaire:
    - `sh -c 'npm run db:migrate:deploy --workspace=@js-monorepo/server && ALLOW_PROD_SEED=true npm run db:seed --workspace=@js-monorepo/server'`
 2. Lancer un redeploy.
-3. Une fois terminé, remettre la commande pre-deploy standard:
+3. Remettre la commande pre-deploy standard:
+   - `npm run db:migrate:deploy --workspace=@js-monorepo/server`
+4. Redéployer.
+
+### Railway: vider puis peupler une fois
+
+Objectif: repartir d'une base vide puis injecter des données de test.
+
+1. Commande pre-deploy temporaire:
+   - `sh -c 'npm run db:migrate:deploy --workspace=@js-monorepo/server && ALLOW_PROD_SEED=true ALLOW_PROD_RESET=true CLEAR_BEFORE_SEED=true npm run db:seed --workspace=@js-monorepo/server'`
+2. Lancer un redeploy.
+3. Remettre la commande pre-deploy standard:
    - `npm run db:migrate:deploy --workspace=@js-monorepo/server`
 4. Redéployer.
 
@@ -41,7 +57,7 @@ Ne pas laisser `db:seed` en pre-deploy en continu.
 
 Pour limiter la volumétrie au premier essai, utiliser temporairement:
 
-- `sh -c 'npm run db:migrate:deploy --workspace=@js-monorepo/server && ALLOW_PROD_SEED=true SEED_USERS=5 SEED_REQUESTS_PER_USER=2 SEED_COMMENTS_PER_REQUEST=2 npm run db:seed --workspace=@js-monorepo/server'`
+- `sh -c 'npm run db:migrate:deploy --workspace=@js-monorepo/server && ALLOW_PROD_SEED=true ALLOW_PROD_RESET=true CLEAR_BEFORE_SEED=true SEED_USERS=5 SEED_REQUESTS_PER_USER=2 SEED_COMMENTS_PER_REQUEST=2 npm run db:seed --workspace=@js-monorepo/server'`
 
 Puis revenir au pre-deploy standard après validation.
 
@@ -52,6 +68,9 @@ Puis revenir au pre-deploy standard après validation.
 - Ne jamais utiliser `prisma migrate reset` en production.
 - Ne jamais utiliser `prisma db push` en production.
 - Le seed est bloqué en production par défaut (`ALLOW_PROD_SEED=true` requis pour forcer).
+- Le clear avant seed supprime les données (`CLEAR_BEFORE_SEED=true`), et en production exige `ALLOW_PROD_RESET=true`.
+- Le clear suit l'ordre `comment -> request -> user -> role` pour respecter les contraintes FK.
+- `deleteMany()` ne réinitialise pas forcément les auto-increments, ce qui est acceptable pour l'app.
 
 ## Procédure safe pour une base de production déjà existante
 
