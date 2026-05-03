@@ -1,87 +1,166 @@
-// Load environment variables from .env file
 import "dotenv/config";
+import argon2 from "argon2";
+import { faker } from "@faker-js/faker";
+import prisma from "../src/lib/prisma";
 
-import fs from "node:fs";
-import path from "node:path";
+const DEFAULT_USERS = 80;
+const DEFAULT_REQUESTS_PER_USER = 4;
+const DEFAULT_COMMENTS_PER_REQUEST = 6;
 
-// Import database client
-import database from "../database/client";
+const seedUsers = Number.parseInt(process.env.SEED_USERS ?? "", 10) || DEFAULT_USERS;
+const seedRequestsPerUser =
+  Number.parseInt(process.env.SEED_REQUESTS_PER_USER ?? "", 10) ||
+  DEFAULT_REQUESTS_PER_USER;
+const seedCommentsPerRequest =
+  Number.parseInt(process.env.SEED_COMMENTS_PER_REQUEST ?? "", 10) ||
+  DEFAULT_COMMENTS_PER_REQUEST;
 
-import type { AbstractSeeder } from "../database/fixtures/AbstractSeeder";
+const tags = [
+  "Frontend",
+  "Backend",
+  "Infra",
+  "UX",
+  "Product",
+  "Performance",
+  "Security",
+  "Data",
+  "DevOps",
+  "Mobile",
+  "Support",
+  "Roadmap",
+];
 
-const fixturesPath = path.join(__dirname, "../database/fixtures");
+const maybeNull = (value: string, chance = 0.35) =>
+  Math.random() < chance ? null : value;
+
+const randomTag = () => tags[Math.floor(Math.random() * tags.length)];
 
 const seed = async () => {
+  if (process.env.NODE_ENV === "production" && process.env.ALLOW_PROD_SEED !== "true") {
+    console.error(
+      "Refused: seeding is disabled in production by default. Set ALLOW_PROD_SEED=true to force it.",
+    );
+    process.exit(1);
+  }
+
   try {
-    const dependencyMap: { [key: string]: AbstractSeeder } = {};
+    faker.seed(42);
 
-    // Construct each seeder
-    const filePaths = fs
-      .readdirSync(fixturesPath)
-      .filter((filePath: string) => !filePath.startsWith("Abstract"));
+    await prisma.role.upsert({
+      where: { id: 1 },
+      update: { roleName: "admin" },
+      create: { id: 1, roleName: "admin" },
+    });
+    await prisma.role.upsert({
+      where: { id: 2 },
+      update: { roleName: "visitor" },
+      create: { id: 2, roleName: "visitor" },
+    });
 
-    for (const filePath of filePaths) {
-      const { default: SeederClass } = await import(
-        path.join(fixturesPath, filePath)
-      );
+    const sharedHash = await argon2.hash("Password123!");
+    const createdUserIds: number[] = [];
 
-      const seeder = new SeederClass() as AbstractSeeder;
+    for (let i = 0; i < seedUsers; i += 1) {
+      const firstName = faker.person.firstName().slice(0, 50);
+      const lastName = faker.person.lastName().slice(0, 50);
+      const email = `seed.user.${Date.now()}.${i}@smartchoicehub.test`.slice(0, 50);
+      const avatar =
+        i % 4 === 0
+          ? `uploads/seed-avatar-${(i % 12) + 1}.jpg`
+          : null;
 
-      dependencyMap[SeederClass.toString()] = seeder;
+      const user = await prisma.user.create({
+        data: {
+          firstName,
+          lastName,
+          email,
+          birthday: faker.date.birthdate({ min: 18, max: 65, mode: "age" }),
+          avatar,
+          hashedPassword: sharedHash,
+          roleId: i % 25 === 0 ? 1 : 2,
+        },
+        select: { id: true },
+      });
+
+      createdUserIds.push(user.id);
     }
 
-    // Sort seeders according to their dependencies
-    const sortedSeeders: AbstractSeeder[] = [];
+    const existingUserIds = (
+      await prisma.user.findMany({
+        select: { id: true },
+      })
+    ).map((user) => user.id);
 
-    // The recursive solver
-    const solveDependencies = (n: AbstractSeeder) => {
-      for (const DependencyClass of n.dependencies) {
-        const dependency = dependencyMap[DependencyClass.toString()];
+    const requestIds: number[] = [];
+    for (const userId of createdUserIds) {
+      for (let i = 0; i < seedRequestsPerUser; i += 1) {
+        const title = faker.lorem.words({ min: 2, max: 5 }).slice(0, 50);
+        const details1 = faker.lorem.paragraph({ min: 2, max: 4 });
+        const details2 = maybeNull(faker.lorem.paragraph({ min: 1, max: 2 }));
+        const details3 = maybeNull(faker.lorem.sentences({ min: 1, max: 2 }), 0.5);
 
-        if (!sortedSeeders.includes(dependency)) {
-          solveDependencies(dependency);
-        }
+        const request = await prisma.request.create({
+          data: {
+            title,
+            tag1: randomTag().slice(0, 50),
+            tag2: maybeNull(randomTag().slice(0, 50), 0.4),
+            details1,
+            details2,
+            details3,
+            date: faker.date.between({
+              from: "2023-01-01T00:00:00.000Z",
+              to: new Date(),
+            }),
+            userId,
+          },
+          select: { id: true },
+        });
+
+        requestIds.push(request.id);
       }
+    }
 
-      if (!sortedSeeders.includes(n)) {
-        sortedSeeders.push(n);
+    const commentPayload: Array<{
+      details: string;
+      userId: number;
+      requestId: number;
+      date: Date;
+    }> = [];
+
+    for (const requestId of requestIds) {
+      const amount = faker.number.int({
+        min: Math.max(2, seedCommentsPerRequest - 2),
+        max: seedCommentsPerRequest + 3,
+      });
+
+      for (let i = 0; i < amount; i += 1) {
+        commentPayload.push({
+          details: faker.lorem.sentences({ min: 1, max: 3 }),
+          userId: existingUserIds[Math.floor(Math.random() * existingUserIds.length)],
+          requestId,
+          date: faker.date.recent({ days: 180 }),
+        });
       }
-    };
-
-    // Solve dependencies for each seeder
-    for (const seeder of Object.values(dependencyMap)) {
-      solveDependencies(seeder);
     }
 
-    // Truncate tables (starting from the depending ones)
-
-    for (const seeder of sortedSeeders.toReversed()) {
-      // Use delete instead of truncate to bypass foreign key constraint
-      // Wait for the delete promise to complete
-      await database.query(`delete from ${seeder.table}`);
+    for (let i = 0; i < commentPayload.length; i += 500) {
+      await prisma.comment.createMany({
+        data: commentPayload.slice(i, i + 500),
+      });
     }
-
-    // Run each seeder
-
-    for (const seeder of sortedSeeders) {
-      await seeder.run();
-
-      // Wait for all the insertion promises to complete
-      // We do want to wait in order to satisfy dependencies
-      await Promise.all(seeder.promises);
-    }
-
-    // Close the database connection
-    database.end();
 
     console.info(
-      `${process.env.DB_NAME} filled from '${path.normalize(fixturesPath)}' 🌱`,
+      `Seed complete: +${createdUserIds.length} users, +${requestIds.length} requests, +${commentPayload.length} comments`,
     );
-  } catch (err) {
-    const { message, stack } = err as Error;
-    console.error("Error filling the database:", message, stack);
+    console.info("Shared test password for seeded users: Password123!");
+  } catch (error) {
+    const err = error as Error;
+    console.error("Seed failed:", err.message);
+    console.error(err.stack);
+    process.exitCode = 1;
+  } finally {
+    await prisma.$disconnect();
   }
 };
 
-// Run the seed function
-seed();
+void seed();

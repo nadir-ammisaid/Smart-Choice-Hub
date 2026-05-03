@@ -11,11 +11,31 @@ La configuration Prisma v7 est centralisée dans `server/prisma.config.ts`.
 - `npm run db:migrate:dev --workspace=@js-monorepo/server`
 - `npm run db:studio --workspace=@js-monorepo/server`
 - `npm run db:push --workspace=@js-monorepo/server` (prototypage local uniquement)
+- `npm run db:seed --workspace=@js-monorepo/server`
+
+Variables optionnelles pour le volume du seed:
+
+- `SEED_USERS` (défaut: `80`)
+- `SEED_REQUESTS_PER_USER` (défaut: `4`)
+- `SEED_COMMENTS_PER_REQUEST` (défaut: `6`)
 
 ### Production
 
 - `npm run db:migrate:baseline --workspace=@js-monorepo/server` (une seule fois si la base existe déjà)
 - `npm run db:migrate:deploy --workspace=@js-monorepo/server`
+
+### Railway: seed one-shot (beaucoup de données)
+
+Si tu veux injecter beaucoup de données en production **une seule fois**:
+
+1. Remplacer temporairement la commande pre-deploy par:
+   - `ALLOW_PROD_SEED=true npm run db:seed --workspace=@js-monorepo/server`
+2. Déployer une fois (le seed s'exécute).
+3. Remettre la commande pre-deploy standard:
+   - `npm run db:migrate:deploy --workspace=@js-monorepo/server`
+4. Redéployer.
+
+Ne pas laisser `db:seed` en pre-deploy en continu.
 
 ## Important
 
@@ -23,6 +43,7 @@ La configuration Prisma v7 est centralisée dans `server/prisma.config.ts`.
 - Ne jamais utiliser `DROP DATABASE` en production.
 - Ne jamais utiliser `prisma migrate reset` en production.
 - Ne jamais utiliser `prisma db push` en production.
+- Le seed est bloqué en production par défaut (`ALLOW_PROD_SEED=true` requis pour forcer).
 
 ## Procédure safe pour une base de production déjà existante
 
