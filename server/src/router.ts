@@ -1,6 +1,5 @@
 import express from "express";
 const router = express.Router();
-import { verify } from "node:crypto";
 import path from "node:path";
 import multer from "multer";
 import authAction from "./modules/auth/authAction";
@@ -25,25 +24,25 @@ router.use(
 );
 router.post("/upload-avatar/:id", upload.single("avatar"), uploads.addAvatar);
 
-router.post("/api/login/", authAction.login);
-router.get("/api/me/", authAction.me);
-router.post("/api/logout/", authAction.logout);
+router.post("/api/login", authAction.login);
+router.get("/api/me", authAction.me);
+router.post("/api/logout", authAction.logout);
 
 router.get("/api/users", userActions.browse);
 router.get("/api/users/:id", userActions.read);
-router.post("/api/users/", authAction.hashPassword, userActions.add);
+router.post("/api/users", authAction.hashPassword, userActions.add);
 router.put("/api/users/:id", userActions.edit);
 router.delete("/api/users/:id", userActions.destroy);
 
 router.get("/api/comments/request/:request_id", commentActions.browse);
 router.get("/api/comments/:id", commentActions.read);
-router.post("/api/comments/", commentActions.add);
+router.post("/api/comments", commentActions.add);
 router.put("/api/comments/:id", commentActions.edit);
 router.delete("/api/comments/:id", commentActions.destroy);
 
 router.get("/api/request", requestActions.browse);
 router.get("/api/request/:id", requestActions.read);
-router.post("/api/request/", requestActions.add);
+router.post("/api/request", requestActions.add);
 
 router.get(
   "/api/request/:id/isPoster",

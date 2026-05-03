@@ -46,7 +46,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (!userConnected) return;
-    fetch(`${import.meta.env.VITE_API_URL}/api/users/${userConnected.id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/users/${userConnected.id}`, {
+      credentials: "include",
+    })
       .then((response) => response.json())
       .then((data) => {
         setUser(data);

@@ -56,6 +56,7 @@ const me: RequestHandler = (req, res) => {
   // Récupère le cookie contenant le token
   if (!token) {
     res.status(401).json({ message: "Non authentifié" });
+    return;
   }
 
   try {
