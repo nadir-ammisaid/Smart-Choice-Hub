@@ -1,6 +1,7 @@
 # Database Migrations (Prisma)
 
 Ce projet utilise maintenant Prisma pour les migrations incrémentales dans `@js-monorepo/server`.
+La configuration Prisma v7 est centralisée dans `server/prisma.config.ts`.
 
 ## Commandes
 
@@ -27,7 +28,7 @@ Ce projet utilise maintenant Prisma pour les migrations incrémentales dans `@js
 
 1. Configurer `DATABASE_URL` vers la base existante.
 2. Introspecter la structure actuelle:
-   - `npx prisma db pull --schema server/prisma/schema.prisma`
+   - `node ./server/bin/prisma.js db pull` (depuis la racine du monorepo)
 3. Générer le client:
    - `npm run db:generate --workspace=@js-monorepo/server`
 4. Baseline de migration (sans rejouer de SQL destructif):

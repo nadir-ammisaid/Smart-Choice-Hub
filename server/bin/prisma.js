@@ -2,6 +2,7 @@
 
 require("dotenv/config");
 const { spawnSync } = require("node:child_process");
+const fs = require("node:fs");
 const path = require("node:path");
 const args = process.argv.slice(2);
 const command = args[0] || "";
@@ -28,7 +29,18 @@ if (!process.env.DATABASE_URL) {
   }
 }
 
-const prismaCli = path.join(__dirname, "../node_modules/prisma/build/index.js");
+const prismaCliCandidates = [
+  path.join(__dirname, "../node_modules/prisma/build/index.js"),
+  path.join(__dirname, "../../node_modules/prisma/build/index.js"),
+];
+const prismaCli = prismaCliCandidates.find((candidate) =>
+  fs.existsSync(candidate),
+);
+
+if (!prismaCli) {
+  console.error("Cannot find Prisma CLI binary in node_modules.");
+  process.exit(1);
+}
 
 const result = spawnSync("node", [prismaCli, ...args], {
   stdio: "inherit",

@@ -1,3 +1,4 @@
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import { PrismaClient } from "@prisma/client";
 
 if (!process.env.DATABASE_URL) {
@@ -14,7 +15,22 @@ declare global {
   var __prisma: PrismaClient | undefined;
 }
 
-const prisma = global.__prisma ?? new PrismaClient();
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL is required to initialize Prisma.");
+}
+
+const parsedUrl = new URL(databaseUrl);
+const adapter = new PrismaMariaDb({
+  host: parsedUrl.hostname,
+  port: parsedUrl.port ? Number(parsedUrl.port) : 3306,
+  user: decodeURIComponent(parsedUrl.username),
+  password: decodeURIComponent(parsedUrl.password),
+  database: parsedUrl.pathname.replace(/^\//, ""),
+});
+
+const prisma = global.__prisma ?? new PrismaClient({ adapter });
 
 if (process.env.NODE_ENV !== "production") {
   global.__prisma = prisma;
