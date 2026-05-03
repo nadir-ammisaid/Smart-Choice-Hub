@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import path from "node:path";
+import fs from "node:fs";
 import multer from "multer";
 import authAction from "./modules/auth/authAction";
 import commentActions from "./modules/comment/commentActions";
@@ -8,9 +9,14 @@ import requestActions from "./modules/request/requestActions";
 import uploads from "./modules/users/uploadsAction";
 import userActions from "./modules/users/userAction";
 
+const uploadDir = path.join(__dirname, "../../server/public/uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../public/uploads"));
+    cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
@@ -20,7 +26,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 router.use(
   "/uploads",
-  express.static(path.join(__dirname, "public", "uploads")),
+  express.static(uploadDir),
 );
 router.post("/upload-avatar/:id", upload.single("avatar"), uploads.addAvatar);
 

@@ -6,6 +6,7 @@ const addAvatar: RequestHandler = async (req, res, next) => {
   // Vérifier si un fichier est bien reçu
   if (!req.file) {
     res.status(400).json({ message: "Aucun fichier reçu" });
+    return;
   }
 
   const file = req.file as Express.Multer.File;
